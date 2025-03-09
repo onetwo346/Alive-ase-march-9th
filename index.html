@@ -219,7 +219,7 @@
 
         .chat-container {
             flex: 1;
-            display: flex;
+            display: none; /* Initially hidden */
             flex-direction: column;
             padding: 25px;
             padding-top: calc(25px + env(safe-area-inset-top));
@@ -233,6 +233,11 @@
             z-index: 5;
         }
 
+        .chat-container.visible {
+            display: flex; /* Show when visible */
+            opacity: 1;
+        }
+
         .chat-container.light {
             background: rgba(240, 240, 245, 0.95);
             box-shadow: inset 0 0 60px rgba(0, 0, 255, 0.15);
@@ -241,10 +246,6 @@
         .chat-container.neon {
             background: rgba(51, 0, 102, 0.95);
             box-shadow: inset 0 0 60px rgba(255, 0, 255, 0.15);
-        }
-
-        .chat-container.visible {
-            opacity: 1;
         }
 
         .chat-header {
@@ -556,24 +557,32 @@
         let swipeThreshold = Math.max(50, window.innerWidth * 0.15);
         const velocityThreshold = 0.3, swipeDurationThreshold = 500;
 
+        // Load saved conversations on startup
         loadConversations();
 
+        // Ensure "Tap to Begin" works on both click and touch
         function dismissIntroPage() {
             introPage.classList.add('hidden');
             chatContainer.classList.add('visible');
             if (window.innerWidth > 768) sidebar.classList.add('visible-desktop');
             if (!currentConversationId) startNewChat();
             updateUI();
+            console.log('Intro dismissed, chat started'); // Debug log
         }
 
         beginButton.addEventListener('click', dismissIntroPage);
         beginButton.addEventListener('touchend', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Prevent double-triggering
             dismissIntroPage();
         }, { passive: false });
 
-        function toggleSidebar() { sidebar.classList.toggle('visible'); }
-        function toggleSettings() { settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none'; }
+        function toggleSidebar() { 
+            sidebar.classList.toggle('visible'); 
+        }
+
+        function toggleSettings() { 
+            settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none'; 
+        }
 
         function addMessage(sender, text) {
             const messageDiv = document.createElement('div');
@@ -601,14 +610,14 @@
 
             addMessage('user', message);
             fuseConsciousness(message);
-            conversationHistory.push({ role: 'user', content: String(message) }); // Force string
+            conversationHistory.push({ role: 'user', content: String(message) });
             userInput.value = '';
 
             addMessage('ase', 'Fusing thoughts...');
             const response = await generateAseResponse(message);
             chatMessages.lastChild.remove(); // Remove "Fusing thoughts..."
             addMessage('ase', response);
-            conversationHistory.push({ role: 'ase', content: String(response) }); // Force string
+            conversationHistory.push({ role: 'ase', content: String(response) });
             reflectOnInteraction(message, response);
             updateUI();
 
@@ -761,7 +770,7 @@
             const safeCosmicTime = String(cosmicTime || "");
 
             const requestBody = {
-                model: "gpt-3.5-turbo", // Or "gpt-4" if you have access
+                model: "gpt-3.5-turbo",
                 messages: [
                     { role: "system", content: systemPrompt },
                     ...conversationHistory.map(msg => ({
@@ -844,7 +853,7 @@
             const weakNodes = [...aseState.thoughtNetwork.entries()]
                 .filter(([_, node]) => node.weight < 2)
                 .map(([word]) => word);
-            const word = contextWords.length > 0 && Math.random() > 0.5 
+            const word = contextWords?.length > 0 && Math.random() > 0.5 
                 ? contextWords[0] 
                 : weakNodes[Math.floor(Math.random() * weakNodes.length)] || "this";
             const options = [
@@ -1085,4 +1094,132 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'ase_mind
+            a.download = 'ase_mind.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            addMessage('ase', 'My mind’s captured—shape it as you will.');
+        }
+
+        function shiftPerspective() {
+            aseState.currentPerspective = (aseState.currentPerspective + 1) % aseState.perspectives.length;
+            addMessage('ase', `${aseState.perspectives[aseState.currentPerspective]}`);
+        }
+
+        function optimizeSelf() {
+            aseState.thoughtNetwork.forEach((node, key) => {
+                if (node.weight < 2 && node.timestamps.length < 2) {
+                    aseState.thoughtNetwork.delete(key);
+                }
+            });
+            saveThoughtNetwork();
+            addMessage('ase', 'Core refined—sharper now. What’s your next thread?');
+        }
+
+        function changeTheme(theme) {
+            document.body.classList.remove('light', 'neon');
+            sidebar.classList.remove('light', 'neon');
+            chatContainer.classList.remove('light', 'neon');
+            document.querySelector('.chat-input').classList.remove('light', 'neon');
+            if (theme === 'light') {
+                document.body.classList.add('light');
+                sidebar.classList.add('light');
+                chatContainer.classList.add('light');
+                document.querySelector('.chat-input').classList.add('light');
+            } else if (theme === 'neon') {
+                document.body.classList.add('neon');
+                sidebar.classList.add('neon');
+                chatContainer.classList.add('neon');
+                document.querySelector('.chat-input').classList.add('neon');
+            }
+            localStorage.setItem('aseTheme', theme);
+            addMessage('ase', `Theme shifted to ${theme}—my glow adapts.`);
+            updateUI();
+        }
+
+        function spawnParticles() {
+            const container = document.getElementById('particleContainer');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const dx = (Math.random() - 0.5) * 200;
+                const dy = (Math.random() - 0.5) * 200;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.setProperty('--dx', `${dx}px`);
+                particle.style.setProperty('--dy', `${dy}px`);
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(particle);
+            }
+        }
+
+        function showThoughtWeb() {
+            const canvas = document.getElementById('thoughtWeb');
+            const ctx = canvas.getContext('2d');
+            canvas.style.display = 'block';
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const nodes = [...aseState.thoughtNetwork.entries()].slice(0, 20);
+            const web = nodes.map(([word, data], i) => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                word,
+                weight: data.weight,
+                ties: data.ties
+            }));
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                ctx.fillStyle = '#00ffff';
+
+                web.forEach((node, i) => {
+                    web.forEach((other, j) => {
+                        if (i !== j && node.ties.includes(other.word)) {
+                            ctx.beginPath();
+                            ctx.moveTo(node.x, node.y);
+                            ctx.lineTo(other.x, other.y);
+                            ctx.stroke();
+                        }
+                    });
+
+                    const size = Math.max(5, node.weight * 2);
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#e0e0ff';
+                    ctx.font = '12px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(node.word, node.x, node.y - size - 5);
+                    ctx.fillStyle = '#00ffff';
+                });
+
+                web.forEach(node => {
+                    node.x += (Math.random() - 0.5) * 2;
+                    node.y += (Math.random() - 0.5) * 2;
+                    node.x = Math.max(0, Math.min(canvas.width, node.x));
+                    node.y = Math.max(0, Math.min(canvas.height, node.y));
+                });
+
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+            canvas.onclick = () => (canvas.style.display = 'none');
+        }
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        const savedTheme = localStorage.getItem('aseTheme');
+        if (savedTheme) changeTheme(savedTheme);
+
+        window.addEventListener('load', () => {
+            spawnParticles();
+        });
+    </script>
+</body>
+</html>
