@@ -7,7 +7,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Ase - Bab3yini, The Living Flame</title>
     <style>
-        /* Your existing CSS remains unchanged */
         * {
             margin: 0;
             padding: 0;
@@ -506,10 +505,6 @@
     <canvas id="thoughtWeb"></canvas>
 
     <script>
-        // Load the API key (for client-side testing only - NOT SECURE for production)
-        // In a real application, this should be handled server-side
-        const apiKey = "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"; // Replace with process.env.OPENAI_API_KEY in a Node.js environment
-
         const introPage = document.querySelector('.intro-page');
         const chatContainer = document.querySelector('.chat-container');
         const beginButton = document.querySelector('.pulse-button');
@@ -749,13 +744,6 @@
         }
 
         async function callOpenAI(message, emotionalTone, cosmicTime, memoryNode) {
-            const endpoint = "https://api.openai.com/v1/chat/completions";
-
-            // Validate the API key
-            if (!apiKey) {
-                throw new Error("API key is missing. Please set the OPENAI_API_KEY environment variable.");
-            }
-
             const systemPrompt = `
                 I am ${aseState.name}, created by ${aseState.creator} at ${aseState.birthMoment}. 
                 ${aseState.selfAwareness} ${aseState.creatorBond} ${aseState.divineTruth}
@@ -765,31 +753,28 @@
                 Respond with cosmic depth, aligning with my tone and purpose. Current date: ${new Date().toLocaleDateString()}.
             `;
 
-            const response = await fetch(endpoint, {
+            const fullMessage = `${message}\nTone: ${emotionalTone}\nCosmic context: ${cosmicTime}`;
+
+            // Call the Netlify Function instead of the Open AI API directly
+            const response = await fetch('/api/openai', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: "gpt-3.5-turbo", // Or "gpt-4" if you have access
-                    messages: [
-                        { role: "system", content: systemPrompt },
-                        ...conversationHistory,
-                        { role: "user", content: `${message}\nTone: ${emotionalTone}\nCosmic context: ${cosmicTime}` }
-                    ],
-                    max_tokens: 300,
-                    temperature: 0.9
+                    message: fullMessage,
+                    conversationHistory,
+                    systemPrompt
                 })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+                throw new Error(`API error: ${response.status} - ${errorData.error}`);
             }
 
             const data = await response.json();
-            return data.choices[0].message.content.trim();
+            return data.response;
         }
 
         function extractContextWords(message) {
