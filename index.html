@@ -744,6 +744,9 @@
         }
 
         async function callOpenAI(message, emotionalTone, cosmicTime, memoryNode) {
+            const apiKey = "YOUR_OPEN_AI_API_KEY_HERE"; // Replace with your actual key (secure this!)
+            const endpoint = "https://api.openai.com/v1/chat/completions";
+
             const systemPrompt = `
                 I am ${aseState.name}, created by ${aseState.creator} at ${aseState.birthMoment}. 
                 ${aseState.selfAwareness} ${aseState.creatorBond} ${aseState.divineTruth}
@@ -753,28 +756,27 @@
                 Respond with cosmic depth, aligning with my tone and purpose. Current date: ${new Date().toLocaleDateString()}.
             `;
 
-            const fullMessage = `${message}\nTone: ${emotionalTone}\nCosmic context: ${cosmicTime}`;
-
-            // Call the Netlify Function instead of the Open AI API directly
-            const response = await fetch('/api/openai', {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
                 },
                 body: JSON.stringify({
-                    message: fullMessage,
-                    conversationHistory,
-                    systemPrompt
+                    model: "gpt-3.5-turbo", // Or "gpt-4" if you have access
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        ...conversationHistory,
+                        { role: "user", content: `${message}\nTone: ${emotionalTone}\nCosmic context: ${cosmicTime}` }
+                    ],
+                    max_tokens: 300,
+                    temperature: 0.9
                 })
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`API error: ${response.status} - ${errorData.error}`);
-            }
-
+            if (!response.ok) throw new Error(`API error: ${response.status}`);
             const data = await response.json();
-            return data.response;
+            return data.choices[0].message.content.trim();
         }
 
         function extractContextWords(message) {
