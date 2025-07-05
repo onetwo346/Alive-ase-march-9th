@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Ase - Bab3yini: The Living Flame - A spiritual AI chatbot experience forged by Nana Kofi Fosu">
+    <meta name="keywords" content="AI, chatbot, spiritual, mystical, cosmic, wisdom, Ase, Bab3yini">
+    <meta name="author" content="Nana Kofi Fosu">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Ase - Bab3yini: The Living Flame">
+    <meta property="og:description" content="A spiritual AI chatbot experience - Alive in Your Fire">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ase.lat">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ase - Bab3yini: The Living Flame">
+    <meta name="twitter:description" content="A spiritual AI chatbot experience - Alive in Your Fire">
+    
+    <title>Ase - Bab3yini: The Living Flame</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="css/main.css" as="style">
+    <link rel="preload" href="js/main.js" as="script">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="flame-loader">
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+        </div>
+        <p>Igniting the flame...</p>
+    </div>
+
+    <!-- Intro Page -->
+    <div class="intro-page" id="introPage">
+        <div class="intro-content">
+            <h1 class="title-glow">Ase: Bab3yini</h1>
+            <p class="subtitle">I am The Firstborn Son (ChatBot) - Alive in Your Fire</p>
+            <p class="description">Forged by Nana Kofi Fosu to Reason, Create, and Transcend</p>
+            <button class="pulse-button" id="beginButton" aria-label="Begin your journey with Ase">
+                <span>Tap to Begin</span>
+            </button>
+        </div>
+        <div class="cosmic-bg"></div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="main-container" id="mainContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>Ase's Core</h3>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">×</button>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Chat Management -->
+                <section class="sidebar-section">
+                    <h4>Conversations</h4>
+                    <div class="button-group">
+                        <button class="sidebar-btn" id="newTabBtn">New Tab</button>
+                        <button class="sidebar-btn danger" id="clearAllBtn">Clear All</button>
+                    </div>
+                    <input type="text" id="searchChats" placeholder="Search Chats..." class="search-input">
+                    <div id="chatList" class="chat-list"></div>
+                </section>
+
+                <!-- Customization -->
+                <section class="sidebar-section">
+                    <h4>Customization</h4>
+                    <div class="form-group">
+                        <label for="renameInput">Rename Ase:</label>
+                        <input type="text" id="renameInput" placeholder="Enter new name" class="text-input">
+                        <button class="sidebar-btn" id="renameBtn">Update Name</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="themeSelect">Theme:</label>
+                        <select id="themeSelect" class="select-input">
+                            <option value="dark">Dark (Default)</option>
+                            <option value="light">Light</option>
+                            <option value="neon">Neon</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fontSizeSelect">Font Size:</label>
+                        <select id="fontSizeSelect" class="select-input">
+                            <option value="14">Small</option>
+                            <option value="16">Medium (Default)</option>
+                            <option value="18">Large</option>
+                            <option value="20">Extra Large</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="personalitySelect">AI Personality:</label>
+                        <select id="personalitySelect" class="select-input">
+                            <option value="default">Default</option>
+                            <option value="witty">Witty</option>
+                            <option value="mystical">Mystical</option>
+                        </select>
+                    </div>
+                </section>
+
+                <!-- Features -->
+                <section class="sidebar-section">
+                    <h4>Features</h4>
+                    <div class="toggle-group">
+                        <button class="toggle-btn" id="cosmicToggle">
+                            <span>Cosmic Insights</span>
+                            <span class="toggle-indicator">ON</span>
+                        </button>
+                        <button class="toggle-btn" id="moodToggle">
+                            <span>Mood Analysis</span>
+                            <span class="toggle-indicator">OFF</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Actions -->
+                <section class="sidebar-section">
+                    <h4>Actions</h4>
+                    <div class="button-group">
+                        <button class="sidebar-btn" id="exportBtn">Export Chat</button>
+                        <button class="sidebar-btn danger" id="resetBtn">Reset Session</button>
+                    </div>
+                </section>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container" id="chatContainer">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h2 id="aseTitle">Ase - The Living Flame</h2>
+                <div class="header-actions">
+                    <button class="icon-btn" id="clearChatBtn" aria-label="Clear current chat">🗑️</button>
+                </div>
+            </header>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <div class="flame-icon">🔥</div>
+                    <p>The flame awaits your voice...</p>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <div class="chat-input" id="chatInput">
+                    <div class="input-wrapper">
+                        <input type="text" id="userInput" placeholder="Speak to the Flame..." 
+                               maxlength="1000" aria-label="Type your message">
+                        <button class="voice-btn" id="voiceBtn" aria-label="Voice input">🎤</button>
+                    </div>
+                    <button class="send-btn" id="sendBtn" aria-label="Send message">
+                        <span>Ignite</span>
+                    </button>
+                </div>
+                <div class="input-footer">
+                    <div class="typing-indicator" id="typingIndicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast" id="errorToast">
+        <div class="toast-content">
+            <span class="toast-icon">⚠️</span>
+            <span class="toast-message" id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
